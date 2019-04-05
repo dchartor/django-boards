@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'boards:home' %}">Django Boards</a>
+      </div>
+    </nav>
+
+  {% block breadcrumb %}
+    <li class="breadcrumb-item active">Boards</li>
+  {% endblock %}
+
+  {% block content %}
+      <table class='table'>
+        <thead>
+          <tr>
+            <th>Board</th>
+            <th>Posts</th>
+            <th>Topics</th>
+            <th>Last Post</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for board in boards %}
+          <tr>
+            <td>
+              <a href="{% url 'boards:board' board.pk %}">{{ board.name }}</a><br>
+              <small style="color: #888">{{ board.description }}</small>
+            </td>
+            <td class="align-middle">
+              {{ board.get_posts_count }}
+            </td>
+            <td class="align-middle">
+              {{ board.topics.count }}
+            </td>
+            <td class="align-middle">
+              {% with post=board.get_last_post %}
+                {% if post %}
+                  <small>
+                    <a href="{% url 'boards:topic_posts' board.pk post.topic.pk %}">
+                      By {{ post.created_by.username }} at {{ post.created_at }}
+                    </a>
+                  </small>
+                {% else %}
+                  <small class="text-muted">
+                    <em>No posts yet.</em>
+                  </small>
+                {% endif %}
+              {% endwith %}
+          </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+    {% endblock %}
